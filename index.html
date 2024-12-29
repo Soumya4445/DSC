@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Sort Demonstration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 700px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 50%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-left: 5px solid #4CAF50;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Merge Sort Demonstration</h1>
+        <p>Enter the array elements separated by commas (e.g., 38, 27, 43, 10):</p>
+        <input type="text" id="arrayInput" placeholder="Enter array elements">
+        <button onclick="sortArray()">Sort and Show Explanation</button>
+
+        <div id="result"></div>
+        <div id="explanation"></div>
+    </div>
+
+    <script>
+        function sortArray() {
+            let input = document.getElementById('arrayInput').value;
+            let array = input.split(',').map(num => parseInt(num.trim()));
+
+            if (array.some(isNaN)) {
+                alert("Please enter valid numbers separated by commas.");
+                return;
+            }
+
+            let resultDiv = document.getElementById('result');
+            let explanationDiv = document.getElementById('explanation');
+
+            // Clear previous results
+            resultDiv.innerHTML = "";
+            explanationDiv.innerHTML = "";
+
+            let explanation = mergeSortWithExplanation(array);
+            resultDiv.innerHTML = <strong>Sorted Array:</strong> [${explanation.sorted.join(', ')}];
+            explanationDiv.innerHTML = `
+                <strong>Explanation:</strong><br><br>
+                <strong>Divide:</strong><br>${explanation.divide.join('<br>')}<br><br>
+                <strong>Conquer:</strong><br>${explanation.conquer.join('<br>')}<br><br>
+                <strong>Merge:</strong><br>${explanation.merge.join('<br>')}
+            `;
+        }
+
+        function mergeSortWithExplanation(arr) {
+            let divideSteps = [];
+            let conquerSteps = [];
+            let mergeSteps = [];
+
+            function mergeSort(arr) {
+                if (arr.length <= 1) {
+                    conquerSteps.push([${arr}] is already sorted.);
+                    return arr;
+                }
+                let mid = Math.floor(arr.length / 2);
+                let left = mergeSort(arr.slice(0, mid));
+                let right = mergeSort(arr.slice(mid));
+
+                mergeSteps.push(Merge ${JSON.stringify(left)} and ${JSON.stringify(right)} to get ${JSON.stringify(merge(left, right))});
+                return merge(left, right);
+            }
+
+            function merge(left, right) {
+                let result = [];
+                let leftIndex = 0;
+                let rightIndex = 0;
+
+                while (leftIndex < left.length && rightIndex < right.length) {
+                    if (left[leftIndex] < right[rightIndex]) {
+                        result.push(left[leftIndex]);
+                        leftIndex++;
+                    } else {
+                        result.push(right[rightIndex]);
+                        rightIndex++;
+                    }
+                }
+
+                return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+            }
+
+            function divideStep(arr) {
+                if (arr.length > 1) {
+                    let mid = Math.floor(arr.length / 2);
+                    let left = arr.slice(0, mid);
+                    let right = arr.slice(mid);
+                    divideSteps.push(${JSON.stringify(arr)} → ${JSON.stringify(left)} and ${JSON.stringify(right)});
+                    divideStep(left);
+                    divideStep(right);
+                }
+            }
+
+            divideStep(arr);
+            let sortedArray = mergeSort(arr);
+
+            return {
+                sorted: sortedArray,
+                divide: divideSteps,
+                conquer: conquerSteps,
+                merge: mergeSteps
+            };
+        }
+    </script>
+
+</body>
+</html>
